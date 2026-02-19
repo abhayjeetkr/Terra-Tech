@@ -6,6 +6,7 @@ opencv-python
 easyocr
 numpy
 torch
-github
 
 
+
+git 
