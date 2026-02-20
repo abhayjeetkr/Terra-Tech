@@ -252,6 +252,25 @@ def get_smart_instruction(objects, stairs_found, step_count):
     else:
         return f"Path clear. {generate_summary(objects)} is in the distance."
 
+def check_brightness(img):
+    """Returns True if too dark (<50 avg brightness)."""
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    brightness = np.mean(hsv[:, :, 2])
+    return bool(brightness < 50), float(brightness)
+
+def generate_summary(objects):
+    """Returns '2 cars, 1 person' string."""
+    counts = {}
+    for obj in objects:
+        label = obj['object']
+        counts[label] = counts.get(label, 0) + 1
+    
+    summary_parts = []
+    for label, count in counts.items():
+        summary_parts.append(f"{count} {label}{'s' if count > 1 else ''}")
+    
+    return ", ".join(summary_parts) if summary_parts else "No objects."
+
 # � HOME ROUTE
 # -------------------------
 @app.route("/")
@@ -406,4 +425,5 @@ def detect():
 # -------------------------
 if _name_ == "_main_":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
