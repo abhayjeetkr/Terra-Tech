@@ -1,19 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>AI Vision Guide</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vision AI Assist</title>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <h1>AI Navigation Assistant</h1>
 
-    <div class="video-container">
-        <video id="video" autoplay playsinline></video>
-        <canvas id="canvas"></canvas>
-    </div>
+    <!-- BACKGROUND EFFECTS -->
+    <div class="glow-orb top-left"></div>
+    <div class="glow-orb bottom-right"></div>
+    <div class="danger-flash" id="dangerFlash"></div>
 
-    <p id="status">Starting camera...</p>
+    <!-- APP CONTAINER -->
+    <main class="app-container">
+
+        <!-- HEADER -->
+        <header class="glass-panel header">
+            <div class="brand">
+                <h1>VISION AI <span class="highlight">ASSIST</span></h1>
+                <p>AI Companion for Visually Impaired</p>
+            </div>
+            <div class="toggles">
+                <button class="icon-btn" id="contrastBtn" aria-label="Toggle High Contrast"><i
+                        class="fa-solid fa-adjust"></i></button>
+                <button class="icon-btn" id="textBtn" aria-label="Toggle Large Text"><i
+                        class="fa-solid fa-text-height"></i></button>
+            </div>
+        </header>
+
+        <!-- CAMERA VIEW -->
+        <section class="camera-section">
+            <div class="camera-wrapper glass-panel">
+                <div class="status-badge" id="camStatus">
+                    <span class="dot"></span> <span id="statusText">READY</span>
+                </div>
+                <video id="video" autoplay playsinline muted></video>
+                <canvas id="canvas"></canvas>
+                <!-- Overlays -->
+                <div class="scan-line" id="scanLine"></div>
+                <div class="corner-brackets">
+                    <span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUTPUT CARD -->
+        <section class="output-section">
+            <div class="ai-card glass-panel" id="aiCard">
+                <div class="ai-icon"><i class="fa-solid fa-robot"></i></div>
+                <div class="ai-content">
+                    <h2 id="aiTitle">Waiting for input...</h2>
+                    <p id="aiDesc">Press 'Start' to begin detection.</p>
+                </div>
+                <div class="distance-badge" id="distanceBadge">-- M</div>
+            </div>
+        </section>
+
+        <!-- NAVIGATION -->
+        <section class="nav-section glass-panel">
+            <div class="input-row">
+                <i class="fa-solid fa-location-dot"></i>
+                <input type="text" id="destination" placeholder="Enter destination...">
+            </div>
+            <div class="nav-actions">
+                <button class="secondary-btn" onclick="getLocation()"><i class="fa-solid fa-crosshairs"></i>
+                    LOCATE</button>
+                <button class="secondary-btn" onclick="getRoute()"><i class="fa-solid fa-route"></i> NAVIGATE</button>
+            </div>
+        </section>
+
+        <!-- MAIN CONTROLS -->
+        <section class="controls-section">
+            <button class="primary-btn large" id="startBtn" onclick="toggleCamera()">
+                <i class="fa-solid fa-power-off"></i>
+                <span id="btnText">START DETECTION</span>
+            </button>
+            <div class="secondary-controls">
+                <button class="secondary-btn" id="micBtn" onclick="toggleVoice()">
+                    <i class="fa-solid fa-microphone"></i> ASK AI
+                </button>
+                <button class="secondary-btn" id="scanBtn" onclick="scanNow()">
+                    <i class="fa-solid fa-expand"></i> SCAN NOW
+                </button>
+            </div>
+        </section>
+
+        <!-- FOOTER / VOICE STATUS -->
+        <footer class="footer glass-panel">
+            <div class="voice-wave" id="voiceWave">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            <p id="voiceStatus">Listening...</p>
+        </footer>
+
+    </main>
 
     <script src="script.js"></script>
 </body>
+
 </html>
