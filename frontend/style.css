@@ -1,23 +1,446 @@
+/* VISION AI ASSIST PREMIUM THEME */
+
+:root {
+    --bg-dark: #050510;
+    --glass-bg: rgba(20, 20, 35, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --primary: #00d4ff;
+    /* Neon Blue */
+    --accent: #d400ff;
+    /* Neon Purple */
+    --danger: #ff004c;
+    /* Neon Red */
+    --success: #00ff9d;
+    /* Neon Green */
+    --text-main: #ffffff;
+    --text-muted: #a0a0b0;
+    --font-head: 'Orbitron', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.secondary-controls {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    background: #111;
-    color: white;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+    font-family: var(--font-body);
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.video-container {
-    position: relative;
-    display: inline-block;
-}
-
-video, canvas {
-    width: 640px;
-    height: 480px;
-    border-radius: 10px;
-}
-
-canvas {
+/* 🌟 BACKGROUND GLOWS */
+.bg-glow {
     position: absolute;
-    left: 0;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    filter: blur(100px);
+    z-index: 0;
+    opacity: 0.4;
+}
+
+.top-left {
+    top: -100px;
+    left: -100px;
+    background: var(--primary);
+}
+
+.bottom-right {
+    bottom: -100px;
+    right: -100px;
+    background: var(--accent);
+}
+
+/* 📱 MAIN CONTAINER */
+.app-container {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    /* Mobile First Layout */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 15px;
+    z-index: 10;
+}
+
+/* 🧊 GLASS PANELS */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.brand h1 {
+    margin: 0;
+    font-family: var(--font-head);
+    font-size: 1.2rem;
+}
+
+.brand .highlight {
+    color: var(--primary);
+}
+
+.brand p {
+    margin: 2px 0 0;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--success);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    background: var(--success);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--success);
+}
+
+/* 🎥 CAMERA SECTION */
+.camera-section {
+    flex-grow: 1;
+    /* Takes available space */
+    position: relative;
+    padding: 5px;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.camera-wrapper {
+    width: 100%;
+    height: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    background: #000;
+}
+
+video,
+canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* OVERLAYS */
+.scan-line {
+    position: absolute;
     top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--primary);
+    box-shadow: 0 0 10px var(--primary);
+    animation: scan 2s linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes scan {
+    0% {
+        top: 0%;
+    }
+
+    100% {
+        top: 100%;
+    }
+}
+
+.danger-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 0, 76, 0.3);
+    border: 4px solid var(--danger);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: 900;
+    font-family: var(--font-head);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+}
+
+.danger-active .danger-overlay {
+    opacity: 1;
+    animation: flash 0.5s infinite;
+}
+
+@keyframes flash {
+
+    0%,
+    100% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0.2;
+    }
+}
+
+/* 🧠 AI CARD */
+.ai-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-box {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.text-content h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.text-content p {
+    margin: 2px 0 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.distance-tag {
+    margin-left: auto;
+    font-family: var(--font-head);
+    font-weight: bold;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+/* 🧭 NAVIGATION */
+.nav-section {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.input-group {
+    flex-grow: 1;
+    position: relative;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.input-group i {
+    color: var(--text-muted);
+}
+
+.input-group input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 10px;
+    font-family: var(--font-body);
+}
+
+.input-group input:focus {
+    outline: none;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    width: 50px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.nav-btn.primary {
+    background: var(--primary);
+    color: #000;
+}
+
+.nav-btn:hover {
+    transform: scale(1.05);
+}
+
+/* 🎮 CONTROLS */
+.control-panel {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+}
+
+.ctrl-btn {
+    border: none;
+    border-radius: 15px;
+    font-family: var(--font-head);
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.ctrl-btn.large {
+    width: 100px;
+    height: 80px;
+    font-size: 1.1rem;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.ctrl-btn.primary {
+    background: linear-gradient(135deg, var(--primary), #008cff);
+}
+
+.ctrl-btn.danger {
+    background: linear-gradient(135deg, var(--danger), #ff004c);
+}
+
+.ctrl-btn.secondary {
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+}
+
+.hidden {
+    display: none;
+}
+
+/* 🗣 VOICE FOOTER */
+.voice-footer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 20px;
+    height: 60px;
+}
+
+.voice-visualizer {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 20px;
+}
+
+.voice-visualizer span {
+    width: 4px;
+    height: 100%;
+    background: var(--primary);
+    border-radius: 2px;
+    animation: wave 1s infinite ease-in-out;
+}
+
+.voice-visualizer span:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.voice-visualizer span:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.voice-visualizer span:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.voice-visualizer span:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+@keyframes wave {
+
+    0%,
+    100% {
+        height: 20%;
+        opacity: 0.5;
+    }
+
+    50% {
+        height: 100%;
+        opacity: 1;
+    }
+}
+
+/* RESPONSIVE */
+@media (min-width: 768px) {
+    .app-container {
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        grid-template-rows: auto 1fr auto;
+    }
+
+    .header {
+        grid-column: span 2;
+    }
+
+    .camera-section {
+        grid-row: span 2;
+    }
+
+    .info-section,
+    .nav-section,
+    .voice-footer {
+        grid-column: 2;
+    }
+
+    .control-panel {
+        grid-column: 2;
+        flex-direction: column;
+    }
+
+    .ctrl-btn.large {
+        width: 100%;
+    }
 }
