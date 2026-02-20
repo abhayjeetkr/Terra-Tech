@@ -251,7 +251,52 @@ def get_smart_instruction(objects, stairs_found, step_count):
     # 🟢 PATH CLEAR (> 3.0m)
     else:
         return f"Path clear. {generate_summary(objects)} is in the distance."
+# 💡 REAL WORLD UTILS
+# -------------------------
+# Context Suggestions & Tackle Advice
+INTERACTIONS = {
+    # 🏃‍♂️ Dynamic Objects
+    "person": "Say 'Excuse me' or ask to move.",
+    "car": "Wait for it to pass.",
+    "truck": "Wait for it to pass.",
+    "bus": "Wait for it to pass.",
+    "bicycle": "Watch out.",
+    "dog": "Do not startle it.",
+    
+    # 🛑 Static Obstacles
+    "chair": "Walk around or sit.",
+    "couch": "Walk around or sit.",
+    "table": "Walk around.",
+    "door": "Reach for the handle.",
+    "bed": "Walk around.",
+    "traffic light": "Wait for signal.",
+    "stop sign": "Stop and look.",
+    "fire hydrant": "Walk around.",
+    
+    # 🤏 Small Items
+    "cup": "Pick it up.",
+    "bottle": "Pick it up.",
+    "cell phone": "It's your device.",
+    "laptop": "Personal computer.",
+    "book": "Readable.",
+    "keys": "Pick them up."
+}
 
+# 🚦 STREET SAFETY ADVICE
+OUTDOOR_INTERACTIONS = {
+    "traffic light": "Check signal color.",
+    "stop sign": "Stop and look both ways.",
+    "car": "Vehicle approaching. Wait.",
+    "truck": "Heavy vehicle. Stay back.",
+    "bus": "Bus approaching. Wait.",
+    "bicycle": "Cyclist ahead. Watch out.",
+    "fire hydrant": "Walk around.",
+    "bench": "You can sit and rest.",
+    "person": "Pedestrian ahead."
+}
+
+# GLOBAL STATE
+outdoor_mode = False
 def check_brightness(img):
     """Returns True if too dark (<50 avg brightness)."""
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -425,5 +470,6 @@ def detect():
 # -------------------------
 if _name_ == "_main_":
     app.run(host='0.0.0.0', port=5000, debug=True)
+
 
 
