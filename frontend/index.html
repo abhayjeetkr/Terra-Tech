@@ -31,10 +31,8 @@
                 <p>AI Companion for Visually Impaired</p>
             </div>
             <div class="toggles">
-                <button class="icon-btn" id="contrastBtn" aria-label="Toggle High Contrast"><i
-                        class="fa-solid fa-adjust"></i></button>
-                <button class="icon-btn" id="textBtn" aria-label="Toggle Large Text"><i
-                        class="fa-solid fa-text-height"></i></button>
+                <button class="icon-btn"  ><a href="https://www.youtube.com/"><i class="fa-brands fa-youtube"></i></a></button>
+                <button class="icon-btn"  ><a href="https://kukufm.com/?srsltid=AfmBOoqLRRXhSjQvrFEa0Qn4uqGFHNH_AnIqnr4IDwKuFLj4cpXen1l6"><i class="fa-brands fa-leanpub"></i></a></button>
             </div>
         </header>
 
@@ -66,18 +64,18 @@
             </div>
         </section>
 
-        <!-- <!-- NAVIGATION -->
+        <!-- NAVIGATION -->
         <section class="nav-section glass-panel">
-            <div class="input-row">
+            <!-- <div class="input-row">
                 <i class="fa-solid fa-location-dot"></i>
                 <input type="text" id="destination" placeholder="Enter destination...">
-            </div>
+            </div> -->
             <div class="nav-actions">
                 <button class="secondary-btn" onclick="getLocation()"><i class="fa-solid fa-crosshairs"></i>
                     LOCATE</button>
-                <button class="secondary-btn" onclick="getRoute()"><i class="fa-solid fa-route"></i> NAVIGATE</button>
+                <!-- <button class="secondary-btn" onclick="getRoute()"><i class="fa-solid fa-route"></i> NAVIGATE</button> -->
             </div>
-        </section> -->
+        </section>
 
         <!-- MAIN CONTROLS -->
         <section class="controls-section">
@@ -109,8 +107,115 @@
 
     </main>
 
+    <!-- MODE SWITCH (manual override / quick toggle) -->
+    <div class="mode-switch">
+        <button id="modeSwitchBtn" title="Switch app mode">Switch Mode</button>
+    </div>
+
     <script src="script.js"></script>
+    <script>
+        // 🚀 START/STOP CAMERA TOGGLE
+async function toggleCamera() {
+    if (!stream) {
+        // START
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: "environment" },
+                audio: false
+            });
+            video.srcObject = stream;
+            video.play();
+
+            // UI Updates
+            updateStatus("ACTIVE", "Scanning...", "var(--success)");
+            btnText.innerText = "STOP DETECTION";
+            startBtn.classList.add("active");
+
+            speak("Vision System Online. Scanning environment.");
+
+            video.onloadedmetadata = () => {
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                startDetection();
+            };
+        } catch (err) {
+            alert("Camera Error: " + err.message);
+        }
+    } else {
+        // STOP
+        stream.getTracks().forEach(track => track.stop());
+        video.srcObject = null;
+        stream = null;
+        clearInterval(detectInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // UI Updates
+        updateStatus("READY", "System Paused", "var(--text-muted)");
+        btnText.innerText = "START DETECTION";
+        startBtn.classList.remove("active");
+        aiTitle.innerText = "System Paused";
+        aiDesc.innerText = "Press Start to resume.";
+        disableDangerMode();
+        speak("System paused.");
+    }
+}
+        // wake.js
+(function () {
+
+    const WakeSpeech =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!WakeSpeech) return;
+
+    const wakeRecognition = new WakeSpeech();
+    wakeRecognition.continuous = true;
+    wakeRecognition.interimResults = false;
+    wakeRecognition.lang = "en-US";
+
+    let assistantActive = false;
+
+    wakeRecognition.onresult = (event) => {
+        const transcript =
+            event.results[event.results.length - 1][0]
+                .transcript
+                .toLowerCase()
+                .trim();
+
+        console.log("Wake:", transcript);
+
+        if (transcript.includes("start assistant") && !assistantActive) {
+            assistantActive = true;
+
+            if (typeof toggleCamera === "function") {
+                toggleCamera();
+            }
+
+            if (typeof startMainVoice === "function") {
+                startMainVoice();
+            }
+        }
+
+        if (transcript.includes("stop assistant") && assistantActive) {
+            assistantActive = false;
+
+            if (typeof toggleCamera === "function") {
+                toggleCamera();
+            }
+
+            if (typeof stopMainVoice === "function") {
+                stopMainVoice();
+            }
+        }
+    };
+
+    wakeRecognition.onend = () => {
+        try { wakeRecognition.start(); } catch (e) {}
+    };
+
+    wakeRecognition.start();
+
+})();
+    </script>
 </body>
 
 </html>
-
