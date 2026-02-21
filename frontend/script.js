@@ -229,10 +229,45 @@ function animateVoice(isActive) {
 // 🧭 GPS & NAV
 function getLocation() {
     if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(pos => {
+        navigator.geolocation.getCurrentPosition(async pos => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
             speak("Location found. Ready to navigate.");
             aiTitle.innerText = "GPS Fixed";
-            aiDesc.innerText = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+
+            try {
+                // Reverse Geocoding using OpenStreetMap Nominatim (Free, No API Key)
+                const response = await fetch(
+                    `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`,
+                    { headers: { 'Accept-Language': 'en' } }
+                );
+                const data = await response.json();
+
+                if (data && data.display_name) {
+                    const address = data.display_name;
+
+                    // You can also extract specific parts like:
+                    const road      = data.address.road || "";
+                    const suburb    = data.address.suburb || "";
+                    const city      = data.address.city || data.address.town || data.address.village || "";
+                    const state     = data.address.state || "";
+                    const country   = data.address.country || "";
+
+                    // Short friendly address
+                    const shortAddr = [road, suburb, city, state].filter(Boolean).join(", ");
+
+                    aiDesc.innerText = shortAddr || address;
+                    speak(`Your current location is ${shortAddr || address}`);
+                } else {
+                    aiDesc.innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
+                }
+
+            } catch (err) {
+                console.error("Geocoding failed:", err);
+                aiDesc.innerText = `${lat.toFixed(4)}, ${lon.toFixed(4)}`; // fallback
+            }
+
         }, () => alert("GPS Permission Denied"));
     }
 }
@@ -445,3 +480,63 @@ handleResponse = function (data) {
     checkTarget(data); // 🔍 Check for specific items
     originalHandleResponse(data);
 };
+      // --- Connection mode switcher ---
+      const ONLINE_APP = "#index.html";
+      const OFFLINE_APP = "http://localhost:3000";
+
+      // Check real internet connectivity
+      async function hasInternet() {
+          try {
+              // Using a lightweight endpoint
+              await fetch("https://www.gstatic.com/generate_204", {
+                  mode: "no-cors",
+                  cache: "no-store"
+              });
+              return true;
+          } catch {
+              return false;
+          }
+      }
+
+      async function switchApp() {
+          const online = await hasInternet();
+
+          if (online) {
+              if (!window.location.href.includes(":5000")) {
+                  window.location.href = ONLINE_APP;
+              }
+          } else {
+              if (!window.location.href.includes(":3000")) {
+                  window.location.href = OFFLINE_APP;
+              }
+          }
+      }
+
+      function updateModeButton() {
+          const btn = document.getElementById('modeSwitchBtn');
+          if (!btn) return;
+          if (window.location.href.includes(":3000")) {
+              btn.textContent = 'Go Online';
+          } else {
+              btn.textContent = 'Go Offline';
+          }
+      }
+
+      document.addEventListener('DOMContentLoaded', () => {
+          // Update button label on load
+          updateModeButton();
+
+          const btn = document.getElementById('modeSwitchBtn');
+          if (btn) {
+              btn.addEventListener('click', (e) => {
+                  // Manual switch: toggle between online and offline
+                  if (window.location.href.includes(":3000")) {
+                      window.location.href = ONLINE_APP;
+                  } else {
+                      window.location.href = OFFLINE_APP;
+                  }
+              });
+          }
+          switchApp();
+          setInterval(switchApp, 5000);
+      });
